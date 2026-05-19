@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Taz Tour & Travel</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #f6f8fb;
+      color: #222;
+    }
+
+    header {
+      width: 100%;
+      padding: 18px 8%;
+      background: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: bold;
+      color: #0066ff;
+    }
+
+    .logo span {
+      color: #ff9f00;
+    }
+
+    nav a {
+      margin-left: 25px;
+      text-decoration: none;
+      color: #333;
+      font-weight: 600;
+      font-size: 15px;
+    }
+
+    .hero {
+  min-height: 100vh;
+  padding: 70px 8%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  text-align: center;
+
+  background-image: url('background.png');
+  background-size: cover;
+  background-position: center bottom;
+  background-repeat: no-repeat;
+}
+
+.hero-text {
+  max-width: 850px;
+  margin-bottom: 50px;
+  color: white;
+  padding: 30px;
+  border-radius: 25px;
+  
+}
+
+.hero-text h1 {
+  font-size: 48px;
+  line-height: 1.2;
+  margin-bottom: 15px;
+}
+
+.hero-text h1 span {
+  color: #f4b400;
+}
+
+.hero-text p {
+  font-size: 18px;
+  line-height: 1.6;
+  margin-bottom: 25px;
+}
+
+.btn-group {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+    .btn-primary,
+    .btn-secondary {
+      padding: 15px 25px;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: bold;
+      display: inline-block;
+    }
+
+    .btn-primary {
+      background: #0066ff;
+      color: white;
+      box-shadow: 0 8px 20px rgba(0,102,255,0.3);
+    }
+
+    .btn-secondary {
+      background: white;
+      color: #0066ff;
+      border: 2px solid #0066ff;
+    }
+
+    .hero-image {
+      background: white;
+      padding: 20px;
+      border-radius: 30px;
+      box-shadow: 0 20px 45px rgba(0,0,0,0.12);
+    }
+
+    .hero-image img {
+      width: 100%;
+      border-radius: 25px;
+      display: block;
+    }
+
+    .section {
+      padding: 70px 8%;
+    }
+
+    .section-title {
+      text-align: center;
+      margin-bottom: 45px;
+    }
+
+    .section-title h2 {
+      font-size: 36px;
+      margin-bottom: 10px;
+    }
+
+    .section-title p {
+      color: #666;
+    }
+
+    .services {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 25px;
+    }
+
+    .service-card {
+      background: white;
+      padding: 30px;
+      border-radius: 25px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.07);
+      text-align: center;
+    }
+
+    .service-card .icon {
+      font-size: 42px;
+      margin-bottom: 15px;
+    }
+
+    .service-card h3 {
+      margin-bottom: 12px;
+      color: #111;
+    }
+
+    .service-card p {
+      color: #666;
+      line-height: 1.6;
+    }
+
+    .cars {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 25px;
+    }
+
+    .car-card {
+      background: white;
+      border-radius: 25px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    }
+
+    .car-card img {
+      width: 100%;
+      height: 210px;
+      object-fit: cover;
+    }
+
+    .car-info {
+      padding: 22px;
+    }
+
+    .car-info h3 {
+      font-size: 22px;
+      margin-bottom: 8px;
+    }
+
+    .car-info p {
+      color: #666;
+      margin-bottom: 15px;
+    }
+
+    .price {
+      font-size: 20px;
+      font-weight: bold;
+      color: #0066ff;
+      margin-bottom: 18px;
+    }
+
+    .car-info a {
+      display: block;
+      text-align: center;
+      padding: 13px;
+      border-radius: 50px;
+      background: #25d366;
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .why {
+      background: #0066ff;
+      color: white;
+      border-radius: 35px;
+      padding: 50px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 25px;
+      text-align: center;
+    }
+
+    .why-box h3 {
+      font-size: 34px;
+      margin-bottom: 8px;
+    }
+
+    .tour-box {
+      background: linear-gradient(135deg, #ff9f00, #ffcc66);
+      border-radius: 35px;
+      padding: 50px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      gap: 30px;
+      color: white;
+    }
+
+    .tour-box h2 {
+      font-size: 38px;
+      margin-bottom: 15px;
+    }
+
+    .tour-box p {
+      line-height: 1.7;
+      margin-bottom: 25px;
+    }
+
+    .tour-box a {
+      background: white;
+      color: #ff9f00;
+      padding: 15px 25px;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: bold;
+      display: inline-block;
+    }
+
+    .tour-box img {
+      width: 100%;
+      border-radius: 25px;
+    }
+
+    footer {
+      background: #111;
+      color: white;
+      padding: 35px 8%;
+      text-align: center;
+    }
+
+    footer p {
+      color: #aaa;
+      margin-top: 8px;
+    }
+
+    @media (max-width: 900px) {
+      header {
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      nav a {
+        margin: 0 8px;
+      }
+
+      .hero {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+
+      .hero-text h1 {
+        font-size: 38px;
+      }
+
+      .btn-group {
+        justify-content: center;
+      }
+
+      .services,
+      .cars,
+      .why,
+      .tour-box {
+        grid-template-columns: 1fr;
+      }
+
+      .why {
+        padding: 35px 20px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <div class="logo">Taz <span>Tour & Travel</span></div>
+    <nav>
+      <a href="#">Beranda</a>
+      <a href="#layanan">Layanan</a>
+      <a href="#mobil">Armada</a>
+      <a href="#kontak">Kontak</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="hero-text">
+      <h1>Sewa Mobil & Paket Tour <br> <span>Nyaman, Aman, Terpercaya</span></h1>
+      <p>
+        Nikmati perjalanan lebih santai bersama Taz Tour & Travel.
+        Tersedia rental mobil harian, antar jemput, wisata keluarga,
+        perjalanan dinas, hingga wedding car.
+      </p>
+
+      <div class="btn-group">
+        <a href="https://wa.me/6281234567890" class="btn-primary">Pesan Sekarang</a>
+        <a href="#mobil" class="btn-secondary">Lihat Armada</a>
+      </div>
+    </div>
+
+      </section>
+
+  <section class="section" id="layanan">
+    <div class="section-title">
+      <h2>Layanan Kami</h2>
+      <p>Pilih layanan sesuai kebutuhan perjalanan Anda</p>
+    </div>
+
+    <div class="services">
+      <div class="service-card">
+        <div class="icon">🚗</div>
+        <h3>Rental Mobil</h3>
+        <p>Sewa mobil harian, mingguan, atau bulanan dengan pilihan armada nyaman.</p>
+      </div>
+
+      <div class="service-card">
+        <div class="icon">🧳</div>
+        <h3>Tour Wisata</h3>
+        <p>Paket wisata keluarga, rombongan, sekolah, kantor, dan komunitas.</p>
+      </div>
+
+      <div class="service-card">
+        <div class="icon">💍</div>
+        <h3>Wedding Car</h3>
+        <p>Mobil pengantin elegan untuk acara pernikahan dan momen spesial Anda.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="mobil">
+  <div class="section-title">
+    <h2>Armada Favorit</h2>
+    <p>Mobil bersih, nyaman, dan siap menemani perjalanan Anda</p>
+  </div>
+
+  <div class="cars">
+
+    <div class="car-card">
+      <img src="avanza.png" alt="Toyota Avanza">
+      <div class="car-info">
+        <h3>Toyota Avanza</h3>
+        <p>6-7 Penumpang • AC • Nyaman</p>
+        <div class="price">Mulai Rp350.000 / hari</div>
+        <a href="https://wa.me/6281234567890">Booking via WhatsApp</a>
+      </div>
+    </div>
+
+    <div class="car-card">
+      <img src="innova.png" alt="Toyota Innova">
+      <div class="car-info">
+        <h3>Toyota Innova</h3>
+        <p>7 Penumpang • AC • Nyaman</p>
+        <div class="price">Mulai Rp550.000 / hari</div>
+        <a href="https://wa.me/6281234567890">Booking via WhatsApp</a>
+      </div>
+    </div>
+
+    <div class="car-card">
+      <img src="hiace.png" alt="Toyota Hiace">
+      <div class="car-info">
+        <h3>Toyota Hiace</h3>
+        <p>Rombongan • Wisata • Travel</p>
+        <div class="price">Mulai Rp1.200.000 / hari</div>
+        <a href="https://wa.me/6281234567890">Booking via WhatsApp</a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+  <section class="section">
+    <div class="why">
+      <div class="why-box">
+        <h3>24/7</h3>
+        <p>Siap Melayani</p>
+      </div>
+
+      <div class="why-box">
+        <h3>100%</h3>
+        <p>Mobil Bersih</p>
+      </div>
+
+      <div class="why-box">
+        <h3>50+</h3>
+        <p>Pelanggan Puas</p>
+      </div>
+
+      <div class="why-box">
+        <h3>⭐</h3>
+        <p>Driver Ramah</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="tour-box">
+      <div>
+        <h2>Paket Wisata Seru Bersama Kami</h2>
+        <p>
+          Mau liburan ke pantai, pegunungan, ziarah, city tour,
+          atau perjalanan rombongan? Kami siap bantu atur perjalanan
+          dari awal sampai selesai.
+        </p>
+        <a href="https://wa.me/6281234567890">Konsultasi Paket Tour</a>
+      </div>
+
+      <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80" alt="Tour Travel">
+    </div>
+  </section>
+
+  <footer id="kontak">
+    <h2>Taz Tour & Travel</h2>
+    <p>Rental Mobil • Tour Wisata • Wedding Car</p>
+    <p>WhatsApp: 0812-3456-7890</p>
+  </footer>
+
+</body>
+</html>
