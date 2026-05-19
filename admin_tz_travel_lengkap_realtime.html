@@ -33,6 +33,8 @@
     .btn-lunas:hover { background: #15803d; }
     .btn-batal { background: #dc2626; }
     .btn-batal:hover { background: #b91c1c; }
+    .btn-hapus { background: #7f1d1d; }
+    .btn-hapus:hover { background: #991b1b; }
     .btn-wa { background: #16a34a; }
     .btn-wa:hover { background: #15803d; }
     .btn-copy { background: #7c3aed; }
@@ -235,6 +237,42 @@
       }
     }
 
+
+    async function hapusDataPesanan(kodeBooking) {
+      const pesanan = semuaPesanan.find(p => p.kodeBooking === kodeBooking || p._key === kodeBooking);
+      if (!pesanan) {
+        alert("Data pesanan tidak ditemukan.");
+        return;
+      }
+
+      const yakin = confirm(
+        "PERINGATAN!\n\n" +
+        "Anda yakin ingin menghapus data pesanan ini dari Firebase?\n\n" +
+        "Kode Booking: " + (pesanan.kodeBooking || kodeBooking) + "\n" +
+        "Nama: " + (pesanan.nama || "-") + "\n" +
+        "Status: " + (pesanan.status || "Menunggu Pembayaran") + "\n\n" +
+        "Data yang sudah dihapus tidak bisa dikembalikan.\n\n" +
+        "Catatan: tombol ini hanya menghapus DATA PESANAN. Kalau ingin membatalkan pesanan dan mengosongkan kursi, klik tombol Batalkan dulu."
+      );
+
+      if (!yakin) return;
+
+      const konfirmasiUlang = confirm(
+        "Konfirmasi sekali lagi:\n\n" +
+        "Hapus permanen data booking " + (pesanan.kodeBooking || kodeBooking) + "?"
+      );
+
+      if (!konfirmasiUlang) return;
+
+      try {
+        await database.ref("pesanan/" + (pesanan._key || kodeBooking)).remove();
+        alert("Data pesanan berhasil dihapus.");
+      } catch (error) {
+        console.error(error);
+        alert("Gagal menghapus data pesanan: " + error.message);
+      }
+    }
+
     async function muatPesanan() {
       const tbody = document.getElementById("isiTabel");
       tbody.innerHTML = `<tr><td colspan="11" class="empty">Memuat data...</td></tr>`;
@@ -290,6 +328,7 @@
             <button class="btn-small btn-wa" onclick="kirimTiketLunas('${p._key || p.kodeBooking}')">Kirim Tiket WA</button>
             <button class="btn-small btn-copy" onclick="salinTiketLunas('${p._key || p.kodeBooking}')">Salin Tiket</button>
             <button class="btn-small btn-batal" onclick="batalkanPesanan('${p._key || p.kodeBooking}')">Batalkan</button>
+            <button class="btn-small btn-hapus" onclick="hapusDataPesanan('${p._key || p.kodeBooking}')">Hapus Data</button>
           </td>
         </tr>
       `).join("");
