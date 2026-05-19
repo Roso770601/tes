@@ -291,6 +291,114 @@
       margin-top: 8px;
     }
 
+
+    .btn-ticket {
+      background: linear-gradient(135deg, #ff9f00, #ffcc66);
+      color: #111;
+      box-shadow: 0 8px 20px rgba(255,159,0,0.35);
+      border: 2px solid #ffcc66;
+    }
+
+    .btn-ticket:hover,
+    .btn-primary:hover,
+    .btn-secondary:hover,
+    .car-info a:hover,
+    .tour-box a:hover {
+      transform: translateY(-2px);
+      transition: 0.2s ease;
+    }
+
+    .ticket-section {
+      padding: 70px 8%;
+    }
+
+    .ticket-box {
+      background: linear-gradient(135deg, #0066ff, #003c99);
+      color: white;
+      border-radius: 35px;
+      padding: 45px;
+      display: grid;
+      grid-template-columns: 1.3fr 0.7fr;
+      align-items: center;
+      gap: 25px;
+      box-shadow: 0 20px 45px rgba(0,102,255,0.22);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .ticket-box::after {
+      content: "🎫";
+      position: absolute;
+      right: 35px;
+      top: 20px;
+      font-size: 95px;
+      opacity: 0.15;
+    }
+
+    .ticket-box h2 {
+      font-size: 34px;
+      margin-bottom: 12px;
+    }
+
+    .ticket-box p {
+      line-height: 1.7;
+      color: #eaf2ff;
+      margin-bottom: 22px;
+    }
+
+    .ticket-features {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 25px;
+    }
+
+    .ticket-feature {
+      background: rgba(255,255,255,0.13);
+      padding: 12px;
+      border-radius: 16px;
+      font-weight: bold;
+      font-size: 14px;
+      text-align: center;
+      backdrop-filter: blur(5px);
+    }
+
+    .btn-ticket-large {
+      background: #ff9f00;
+      color: #111;
+      padding: 15px 26px;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 800;
+      display: inline-block;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.18);
+    }
+
+    .ticket-note {
+      background: white;
+      color: #0066ff;
+      padding: 25px;
+      border-radius: 25px;
+      text-align: center;
+      font-weight: bold;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      z-index: 1;
+    }
+
+    .floating-ticket-btn {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      background: #ff9f00;
+      color: #111;
+      padding: 14px 18px;
+      border-radius: 999px;
+      text-decoration: none;
+      font-weight: 800;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.22);
+      z-index: 99;
+    }
+
     @media (max-width: 900px) {
       header {
         flex-direction: column;
@@ -317,7 +425,9 @@
       .services,
       .cars,
       .why,
-      .tour-box {
+      .tour-box,
+      .ticket-box,
+      .ticket-features {
         grid-template-columns: 1fr;
       }
 
@@ -336,6 +446,7 @@
       <a href="#">Beranda</a>
       <a href="#layanan">Layanan</a>
       <a href="#mobil">Armada</a>
+      <a href="#tiket">Tiket Travel</a>
       <a href="#kontak">Kontak</a>
     </nav>
   </header>
@@ -350,12 +461,40 @@
       </p>
 
       <div class="btn-group">
-        <a href="https://wa.me/6281234567890" class="btn-primary">Pesan Sekarang</a>
+        <a href="booking_tiket.html" class="btn-primary btn-ticket">Pesan Tiket Travel</a>
+        <a href="https://wa.me/6281234567890" class="btn-primary">Rental via WhatsApp</a>
         <a href="#mobil" class="btn-secondary">Lihat Armada</a>
       </div>
     </div>
 
       </section>
+
+
+  <section class="ticket-section" id="tiket">
+    <div class="ticket-box">
+      <div>
+        <h2>Pesan Tiket Travel Reguler Online</h2>
+        <p>
+          Untuk pemesanan kursi Toyota Hiace, cek rute, pilih tanggal,
+          pilih nomor kursi, lalu lakukan pembayaran sesuai instruksi.
+          Tiket dapat dicek dan dikonfirmasi secara realtime.
+        </p>
+
+        <div class="ticket-features">
+          <div class="ticket-feature">Pilih Kursi</div>
+          <div class="ticket-feature">Cek Status</div>
+          <div class="ticket-feature">E-Tiket</div>
+        </div>
+
+        <a href="booking_tiket.html" class="btn-ticket-large">Masuk ke Pemesanan Tiket</a>
+      </div>
+
+      <div class="ticket-note">
+        🎫 Travel Reguler<br>
+        Booking kursi lebih mudah, cepat, dan praktis.
+      </div>
+    </div>
+  </section>
 
   <section class="section" id="layanan">
     <div class="section-title">
@@ -418,7 +557,7 @@
         <h3>Toyota Hiace</h3>
         <p>Rombongan • Wisata • Travel</p>
         <div class="price">Mulai Rp1.200.000 / hari</div>
-        <a href="https://wa.me/6281234567890">Booking via WhatsApp</a>
+        <a href="booking_tiket.html">Pesan Tiket Hiace</a>
       </div>
     </div>
 
@@ -470,6 +609,8 @@
     <p>Rental Mobil • Tour Wisata • Wedding Car</p>
     <p>WhatsApp: 0812-3456-7890</p>
   </footer>
+
+  <a href="booking_tiket.html" class="floating-ticket-btn">🎫 Pesan Tiket</a>
 
 </body>
 </html>

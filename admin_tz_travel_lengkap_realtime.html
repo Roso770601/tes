@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Pesanan - TZ Travel</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f4f4f9; margin: 0; color: #0f172a; }
+    header { background: linear-gradient(135deg, #1e3a8a, #0f172a); color: white; padding: 24px 18px; text-align: center; }
+    header h1 { margin: 0; font-size: 26px; }
+    header p { margin: 8px 0 0; color: #bfdbfe; }
+    .container { max-width: 1150px; margin: 24px auto; background: white; padding: 18px; border-radius: 12px; box-shadow: 0 4px 14px rgba(15,23,42,.1); }
+    .toolbar { display: flex; gap: 10px; flex-wrap: wrap; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+    input, select { padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; }
+    button { background: #2563eb; color: white; border: none; border-radius: 8px; padding: 10px 14px; font-weight: bold; cursor: pointer; }
+    button:hover { background: #1d4ed8; }
+    .btn-danger { background: #dc2626; }
+    .btn-danger:hover { background: #b91c1c; }
+    .summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin: 15px 0; }
+    .card { background: #eff6ff; border: 1px solid #bfdbfe; padding: 14px; border-radius: 10px; }
+    .card b { display: block; font-size: 22px; color: #1e3a8a; margin-top: 4px; }
+    .table-wrap { overflow-x: auto; border: 1px solid #e2e8f0; border-radius: 10px; }
+    table { width: 100%; border-collapse: collapse; min-width: 980px; }
+    th, td { padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: left; font-size: 13px; vertical-align: top; }
+    th { background: #f1f5f9; color: #334155; position: sticky; top: 0; }
+    tr:hover { background: #f8fafc; }
+    .status { font-weight: bold; }
+    .status-menunggu { color: #d97706; }
+    .status-lunas { color: #16a34a; }
+    .status-batal { color: #dc2626; }
+    .btn-small { padding: 7px 9px; font-size: 12px; margin: 2px; }
+    .btn-lunas { background: #16a34a; }
+    .btn-lunas:hover { background: #15803d; }
+    .btn-batal { background: #dc2626; }
+    .btn-batal:hover { background: #b91c1c; }
+    .btn-wa { background: #16a34a; }
+    .btn-wa:hover { background: #15803d; }
+    .btn-copy { background: #7c3aed; }
+    .btn-copy:hover { background: #6d28d9; }
+    .muted { color: #64748b; font-size: 12px; }
+    .empty { text-align: center; padding: 30px; color: #64748b; }
+    a.wa { color: #16a34a; font-weight: bold; text-decoration: none; }
+    @media print {
+      .toolbar, button { display: none; }
+      body { background: white; }
+      .container { box-shadow: none; margin: 0; max-width: none; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Admin Pesanan TZ Travel</h1>
+    <p>Data otomatis dari Firebase Realtime Database</p>
+  </header>
+
+  <div class="container">
+    <div class="toolbar">
+      <div>
+        <input type="text" id="cari" placeholder="Cari nama, no HP, rute, kode booking..." oninput="renderTabel()" style="min-width: 280px;">
+        <input type="date" id="filterTanggal" onchange="renderTabel()">
+        <select id="filterStatus" onchange="renderTabel()">
+          <option value="">Semua Status</option>
+          <option value="Menunggu Pembayaran">Menunggu Pembayaran</option>
+          <option value="Lunas">Lunas</option>
+          <option value="Batal">Batal</option>
+        </select>
+      </div>
+      <div>
+        <button onclick="muatPesanan()">Refresh Data</button>
+        <button onclick="window.print()">Cetak</button>
+      </div>
+    </div>
+
+    <div class="summary">
+      <div class="card">Total Pesanan <b id="totalPesanan">0</b></div>
+      <div class="card">Total Tiket <b id="totalTiket">0</b></div>
+      <div class="card">Total Omzet <b id="totalOmzet">Rp 0</b></div>
+      <div class="card">Menunggu Bayar <b id="totalMenunggu">0</b></div>
+      <div class="card">Lunas <b id="totalLunas">0</b></div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Waktu Pesan</th>
+            <th>Kode</th>
+            <th>Nama</th>
+            <th>No HP</th>
+            <th>Rute</th>
+            <th>Tanggal</th>
+            <th>Kursi</th>
+            <th>Jumlah</th>
+            <th>Total</th>
+            <th>Status</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="isiTabel">
+          <tr><td colspan="11" class="empty">Memuat data...</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="muted">Catatan: halaman admin ini belum memakai login. Jangan bagikan link admin ke orang lain dulu.</p>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-database-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDs77vWpWHtPU7V3VZsAeiB3gnvOuM_kes",
+      authDomain: "travel-e41e5.firebaseapp.com",
+      databaseURL: "https://travel-e41e5-default-rtdb.asia-southeast1.firebasedatabase.app/",
+      projectId: "travel-e41e5",
+      storageBucket: "travel-e41e5.firebasestorage.app",
+      messagingSenderId: "1054500582955",
+      appId: "1:1054500582955:web:17d0dcc333d03557425c6e",
+      measurementId: "G-0Z772RENBP"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+    let semuaPesanan = [];
+
+    function formatRupiah(angka) {
+      return "Rp " + Number(angka || 0).toLocaleString('id-ID');
+    }
+
+    function formatWaktu(iso) {
+      if (!iso) return "-";
+      const d = new Date(iso);
+      return d.toLocaleString('id-ID', { dateStyle: 'short', timeStyle: 'short' });
+    }
+
+    function bersihkan(text) {
+      return String(text || "").toLowerCase();
+    }
+
+    function linkWhatsApp(noHp) {
+      const nomor = String(noHp || "").replace(/\D/g, "");
+      if (!nomor) return "-";
+      let nomorWa = nomor;
+      if (nomorWa.startsWith("0")) nomorWa = "62" + nomorWa.slice(1);
+      return `<a class="wa" target="_blank" href="https://wa.me/${nomorWa}">${noHp}</a>`;
+    }
+
+    function buatIdRute(rute) {
+      return String(rute || "")
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "_")
+        .replace(/^_+|_+$/g, "");
+    }
+
+    function kelasStatus(status) {
+      const s = status || "Menunggu Pembayaran";
+      if (s === "Lunas") return "status status-lunas";
+      if (s === "Batal") return "status status-batal";
+      return "status status-menunggu";
+    }
+
+    async function ubahStatus(kodeBooking, statusBaru) {
+      if (!kodeBooking) return;
+      await database.ref("pesanan/" + kodeBooking + "/status").set(statusBaru);
+      if (statusBaru === "Lunas") {
+        setTimeout(() => {
+          const mauKirim = confirm("Status sudah diubah menjadi Lunas. Kirim E-Tiket Lunas ke WhatsApp penumpang sekarang?");
+          if (mauKirim) kirimTiketLunas(kodeBooking);
+        }, 400);
+      }
+    }
+
+    async function batalkanPesanan(kodeBooking) {
+      const pesanan = semuaPesanan.find(p => p.kodeBooking === kodeBooking || p._key === kodeBooking);
+      if (!pesanan) return;
+      const yakin = confirm("Batalkan pesanan " + kodeBooking + " dan kosongkan lagi kursinya?");
+      if (!yakin) return;
+
+      const pathKursi = "kursiTerpesan/" + buatIdRute(pesanan.rute) + "/" + pesanan.tanggal;
+      const updateKursi = {};
+      (pesanan.kursi || []).forEach(nomor => {
+        updateKursi[nomor] = null;
+      });
+
+      await database.ref(pathKursi).update(updateKursi);
+      await database.ref("pesanan/" + (pesanan._key || kodeBooking) + "/status").set("Batal");
+    }
+
+
+    function normalisasiNomorWa(noHp) {
+      let nomor = String(noHp || "").replace(/\D/g, "");
+      if (!nomor) return "";
+      if (nomor.startsWith("0")) nomor = "62" + nomor.slice(1);
+      if (nomor.startsWith("8")) nomor = "62" + nomor;
+      return nomor;
+    }
+
+    function buatPesanTiketLunas(p) {
+      const kursi = Array.isArray(p.kursi) ? p.kursi.join(", ") : (p.kursi || "-");
+      return (
+        "Halo Kak, pembayaran tiket TZ Travel sudah kami terima.\n\n" +
+        "Berikut E-Tiket Lunas Anda:\n\n" +
+        "Kode Booking: " + (p.kodeBooking || "-") + "\n" +
+        "Nama: " + (p.nama || "-") + "\n" +
+        "No HP: " + (p.noHp || "-") + "\n" +
+        "Rute: " + (p.rute || "-") + "\n" +
+        "Tanggal: " + (p.tanggal || "-") + "\n" +
+        "Nomor Kursi: " + kursi + "\n" +
+        "Jumlah Tiket: " + (p.jumlah || 0) + "\n" +
+        "Total Pembayaran: " + (p.totalTeks || formatRupiah(p.totalAngka)) + "\n" +
+        "Status: LUNAS\n\n" +
+        "Silakan tunjukkan pesan ini kepada petugas saat keberangkatan.\n\n" +
+        "Terima kasih."
+      );
+    }
+
+    function kirimTiketLunas(kodeBooking) {
+      const p = semuaPesanan.find(item => item.kodeBooking === kodeBooking || item._key === kodeBooking);
+      if (!p) return alert("Data pesanan tidak ditemukan.");
+      if (p.status !== "Lunas") return alert("Status pesanan belum Lunas. Klik tombol Lunas dulu setelah pembayaran dicek.");
+      const nomor = normalisasiNomorWa(p.noHp);
+      if (!nomor) return alert("Nomor WhatsApp pemesan kosong/tidak valid.");
+      const pesan = encodeURIComponent(buatPesanTiketLunas(p));
+      window.open("https://wa.me/" + nomor + "?text=" + pesan, "_blank");
+    }
+
+    async function salinTiketLunas(kodeBooking) {
+      const p = semuaPesanan.find(item => item.kodeBooking === kodeBooking || item._key === kodeBooking);
+      if (!p) return alert("Data pesanan tidak ditemukan.");
+      const teks = buatPesanTiketLunas(p);
+      try {
+        await navigator.clipboard.writeText(teks);
+        alert("Teks tiket lunas berhasil disalin.");
+      } catch (e) {
+        alert(teks);
+      }
+    }
+
+    async function muatPesanan() {
+      const tbody = document.getElementById("isiTabel");
+      tbody.innerHTML = `<tr><td colspan="11" class="empty">Memuat data...</td></tr>`;
+      try {
+        const snapshot = await database.ref("pesanan").once("value");
+        const data = snapshot.val() || {};
+        semuaPesanan = Object.entries(data).map(([key, value]) => ({ _key: key, ...value })).sort((a, b) => new Date(b.waktuPesan || 0) - new Date(a.waktuPesan || 0));
+        renderTabel();
+      } catch (error) {
+        tbody.innerHTML = `<tr><td colspan="11" class="empty">Gagal memuat data: ${error.message}</td></tr>`;
+      }
+    }
+
+    function renderTabel() {
+      const tbody = document.getElementById("isiTabel");
+      const kata = bersihkan(document.getElementById("cari").value);
+      const tanggal = document.getElementById("filterTanggal").value;
+      const statusFilter = document.getElementById("filterStatus").value;
+
+      const hasil = semuaPesanan.filter(p => {
+        const gabungan = bersihkan(`${p.kodeBooking} ${p.nama} ${p.noHp} ${p.rute} ${p.tanggal} ${(p.kursi || []).join(', ')}`);
+        const cocokCari = !kata || gabungan.includes(kata);
+        const cocokTanggal = !tanggal || p.tanggal === tanggal;
+        const cocokStatus = !statusFilter || (p.status || "Menunggu Pembayaran") === statusFilter;
+        return cocokCari && cocokTanggal && cocokStatus;
+      });
+
+      document.getElementById("totalPesanan").innerText = hasil.length;
+      document.getElementById("totalTiket").innerText = hasil.reduce((sum, p) => sum + Number(p.jumlah || 0), 0);
+      document.getElementById("totalOmzet").innerText = formatRupiah(hasil.filter(p => p.status !== "Batal").reduce((sum, p) => sum + Number(p.totalAngka || 0), 0));
+      document.getElementById("totalMenunggu").innerText = hasil.filter(p => (p.status || "Menunggu Pembayaran") === "Menunggu Pembayaran").length;
+      document.getElementById("totalLunas").innerText = hasil.filter(p => p.status === "Lunas").length;
+
+      if (hasil.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="11" class="empty">Belum ada data pesanan.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = hasil.map(p => `
+        <tr>
+          <td>${formatWaktu(p.waktuPesan)}</td>
+          <td><b>${p.kodeBooking || '-'}</b></td>
+          <td>${p.nama || '-'}</td>
+          <td>${linkWhatsApp(p.noHp)}</td>
+          <td>${p.rute || '-'}</td>
+          <td>${p.tanggal || '-'}</td>
+          <td><b>${(p.kursi || []).join(', ')}</b></td>
+          <td>${p.jumlah || 0}</td>
+          <td><b>${p.totalTeks || formatRupiah(p.totalAngka)}</b></td>
+          <td class="${kelasStatus(p.status)}">${p.status || 'Menunggu Pembayaran'}</td>
+          <td>
+            <button class="btn-small btn-lunas" onclick="ubahStatus('${p._key || p.kodeBooking}', 'Lunas')">Lunas</button>
+            <button class="btn-small btn-wa" onclick="kirimTiketLunas('${p._key || p.kodeBooking}')">Kirim Tiket WA</button>
+            <button class="btn-small btn-copy" onclick="salinTiketLunas('${p._key || p.kodeBooking}')">Salin Tiket</button>
+            <button class="btn-small btn-batal" onclick="batalkanPesanan('${p._key || p.kodeBooking}')">Batalkan</button>
+          </td>
+        </tr>
+      `).join("");
+    }
+
+    database.ref("pesanan").on("value", snapshot => {
+      const data = snapshot.val() || {};
+      semuaPesanan = Object.entries(data).map(([key, value]) => ({ _key: key, ...value })).sort((a, b) => new Date(b.waktuPesan || 0) - new Date(a.waktuPesan || 0));
+      renderTabel();
+    });
+  </script>
+</body>
+</html>
